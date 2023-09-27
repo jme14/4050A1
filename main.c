@@ -17,6 +17,7 @@ int main(void)
 	IsDirected();
     GetCounts(&countVertices,&countEdges);
 
+
     Vertex vertices[countVertices];
     Edge edges[countEdges];
     memset(vertices,0,sizeof(vertices));

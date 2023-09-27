@@ -4,6 +4,15 @@
 #include "BFS.h"
 
 int IsDirected(void){ // ??? 
+
+    char input[100];
+    int rando = 0;
+    printf("The graph is going to be directed whether you like it or not");
+    if ( fgets(input, sizeof(input), stdin) != NULL){
+        if (!sscanf(input, "%d", &rando)){
+            printf("A problem occured\n");
+        }
+    }
     return 1;
 }
 void SetDirected(int fIsDirected){ // requires user input regarding if graph is directed or not  
@@ -12,10 +21,50 @@ void SetDirected(int fIsDirected){ // requires user input regarding if graph is 
 
 void GetCounts(int * pCountVertices, int * pCountEdges){ // requires user input regarding amount of vertices and edges 
 
+    char input[100];
+    printf("Enter number of vertices: \n");
+    if ( fgets(input, sizeof(input), stdin) != NULL){ // if fgets works
+        if ( sscanf(input, "%d\n", pCountVertices) != 1){
+            printf("Invalid number, start over\n");
+            GetCounts(pCountVertices, pCountEdges);
+            return;
+        }
+    } else {
+        printf("Input too large, start over\n");
+        printf("%s\n", input);
+        GetCounts(pCountVertices, pCountEdges);
+        return;
+    }
+
+    printf("Enter number of edges: \n");
+    if ( fgets(input, sizeof(input), stdin) != NULL){ // if fgets works
+        if ( sscanf(input, "%d", pCountEdges) != 1){
+            printf("Invalid number, start over\n");
+            GetCounts(pCountVertices, pCountEdges);
+            return;
+        }
+    } else {
+        printf("Input too large, start over\n");
+        GetCounts(pCountVertices, pCountEdges);
+        return;
+    }
+
 }
 
 void GetEdge(Edge * pEdge){ // requires user input regarding edge content 
 
+    char input[100];
+    printf("Enter edge\n");
+    if ( fgets(input, sizeof(input), stdin) != NULL ){
+        if ( !sscanf(input, "%d %d %f\n", &pEdge->from, &pEdge->to, &pEdge->weight)){
+            printf("Invalid edge, try again\n");
+            GetEdge(pEdge);
+        }
+    }
+    else {
+        printf("Input too large, try again\n");
+        GetEdge(pEdge);
+    }
 }
 
 void GetEdges(Edge edges[], int countEdges){ // requires user input of all edges 
@@ -77,7 +126,7 @@ void BuildAdjacency(Vertex vertices[], Edge edges[], int countVertices, int coun
         int fromVertex = edges[i].from;
         
         // simple vertex initialization
-        vertices[fromVertex].number = fromVertex;
+        vertices[fromVertex].number = fromVertex+1;
         vertices[fromVertex].color = WHITE;
         vertices[fromVertex].d = -1;
         vertices[fromVertex].f = -1;
