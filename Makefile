@@ -20,11 +20,11 @@ default: test testcc
 	@echo Compiling $^ 
 	@$(CPP) $(CPPFLAGS) $^
 
-test : main.o BFS.o DFS.o libcs4050.a
+test : main.o BFS.o DFS.o libcs4050.a Queue.o
 	@echo Linking $@ 
 	@$(CC) $^ $(LDFLAGS) -o $@
 
-testcc : maincc.o BFS.o DFS.o libcs4050.a
+testcc : maincc.o BFS.o DFS.o libcs4050.a Queue.o
 	@echo Linking $@
 	@$(CC) $^ $(LDFLAGS) -o $@
 
