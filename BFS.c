@@ -2,15 +2,80 @@
 #include <stdlib.h>
 #include "cs4050.h"
 #include "BFS.h"
-#include "Queue.h"
 
 
 #define INF 1000000
+
+/* Queue implementation */
+
+// behind the scenes 
+typedef struct _QueueNode{
+    struct _QueueNode* prior;
+    struct _QueueNode* next;
+    Vertex* vert; // might need to change 
+} QueueNode;
+
+
+typedef struct _Queue{
+    struct _QueueNode* head;
+    struct _QueueNode* tail;
+} Queue;
+
+Queue newQueue();
+Queue* enqueue(Queue* queue, Vertex* vert);
+Vertex* dequeue(Queue* queue);
+int isEmpty(Queue queue);
+
+Queue newQueue(){
+
+    Queue q;
+    q.head = NULL;
+    q.tail = NULL;
+    return q;
+}
+
+Queue* enqueue(Queue* queue, Vertex* vert){
+
+
+    QueueNode* newNode = malloc(sizeof(QueueNode));
+    newNode->vert = vert;
+    if ( queue->head == NULL ){
+        queue->tail = queue->head = newNode;
+        newNode->next = NULL;
+        newNode->prior = NULL;
+        return queue;
+    }
+
+    newNode->next = queue->tail;
+    newNode->prior = NULL;
+    queue->tail->prior = newNode;
+    queue->tail = newNode;
+
+    return queue;
+}
+
+Vertex* dequeue(Queue* queue){ //removes element in the queue to exist here for the longest time 
+
+    if ( queue->head == NULL ) return NULL;
+
+    QueueNode* freer = queue->head;
+    Vertex* returner = freer->vert;
+    queue->head = queue->head->prior;
+    if( queue->head != NULL) queue->head->next = NULL;
+    free(freer);
+
+    return returner;
+}
+
+int isEmpty(Queue queue){
+    if ( queue.head == NULL) return 1;
+    return 0;
+}
 int IsDirected(void){ // ??? 
 
     char input[100];
     int rando = 0;
-    printf("The graph is going to be directed whether you like it or not");
+    printf("The graph is going to be directed whether you like it or not!\n");
     if ( fgets(input, sizeof(input), stdin) != NULL){
         if (!sscanf(input, "%d", &rando)){
             printf("A problem occured\n");
@@ -57,7 +122,6 @@ void GetCounts(int * pCountVertices, int * pCountEdges){ // requires user input 
 void GetEdge(Edge * pEdge){ // requires user input regarding edge content 
 
     char input[100];
-    printf("Enter edge\n");
     if ( fgets(input, sizeof(input), stdin) != NULL ){
         if ( !sscanf(input, "%d %d %f\n", &pEdge->from, &pEdge->to, &pEdge->weight)){
             printf("Invalid edge, try again\n");
@@ -87,7 +151,7 @@ void PrintVertex(Vertex vertex){ // prints information about the vertex
         if ( otherVertex == vertex.number) otherVertex = adjLister->pEdge->to;
         /* */
 
-        printf("%d->%d (%f)\n", vertex.number, otherVertex, adjLister->pEdge->weight);
+        printf("\t%d->%d (%f)\n", vertex.number, otherVertex, adjLister->pEdge->weight);
         adjLister = adjLister->next;
     }
 }
